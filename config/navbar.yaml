@@ -1,0 +1,30 @@
+navbar:
+    enabled: true
+
+    style:
+        type: floating
+        blur: true
+
+    scroll:
+        direction: horizontal
+
+    items:
+        - name: Home
+            url: /
+
+        - name: Article
+            url: /article
+
+        - name: Photography
+            url: /photography
+            children:
+                - name: Film
+                    url: /photography/film
+                - name: Digital
+                    url: /photography/digital
+
+        - name: Projects
+            url: /projects
+
+        - name: About
+            url: /about

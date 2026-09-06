@@ -1,0 +1,26 @@
+theme:
+    default: dark
+    colors:
+        dark:
+            primary: "#7bb8d9"
+            secondary: "#e8a89c"
+            background: "#0d1016"
+            surface: "#161a22"
+            text: "#e5e8ee"
+            muted: "#7f8794"
+        light:
+            primary: "#2f6690"
+            secondary: "#c96a4e"
+            background: "#f6f4ef"
+            surface: "#EDEEF7"
+            text: "#22242a"
+            muted: "#333333"
+    background:
+        image: "/public/images/background.jpg"
+        overlay:
+            dark: 0.8
+            light: 0.6
+
+    navbar:
+        opacity: 0.4
+        radius: 999

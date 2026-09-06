@@ -1,0 +1,18 @@
+categories:
+    posts:
+        path: posts
+        route: article
+        renderer: article
+        label: Article
+        
+    photography:
+        path: photography
+        route: photography
+        renderer: gallery
+        label: Photography
+
+    projects:
+        path: projects
+        route: projects
+        renderer: article
+        label: Projects

@@ -1,0 +1,6 @@
+{
+    "name": "personal-website-template",
+    "private": true,
+    "type": "module",
+    "description": "Static config-driven personal website template. No dependencies; Node is only used at authoring time to run engine/contentScanner.js."
+}

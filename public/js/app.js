@@ -1,12 +1,12 @@
-import loadAllConfig from '../../engine/configLoader.js';
-import listAlbums from '../../engine/contentIndex.js';
-import renderMarkdown from '../../engine/markdownParser.js';
-import renderNavbar from '../../components/Navbar.js';
-import renderProfile from '../../components/Profile.js';
-import renderFooter from '../../components/Footer.js';
-import renderHome from '../../components/Home.js';
-import getRenderer from '../../components/Renderer.js';
-import escapeHtml from '../../components/util.js';
+import { loadAllConfig } from '../../engine/configLoader.js';
+import { listAlbums } from '../../engine/contentIndex.js';
+import { renderMarkdown } from '../../engine/markdownParser.js';
+import { renderNavbar } from '../../components/Navbar.js';
+import { renderProfile } from '../../components/Profile.js';
+import { renderFooter } from '../../components/Footer.js';
+import { renderHome } from '../../components/Home.js';
+import { getRenderer } from '../../components/Renderer.js';
+import { escapeHtml } from '../../components/util.js';
 
 const THEME_STORAGE_KEY = 'theme-mode';
 

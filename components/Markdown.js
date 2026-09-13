@@ -1,5 +1,5 @@
 import {listPosts, getPost} from '../engine/contentIndex.js';
-import escapeHtml from './util.js';
+import { escapeHtml } from './util.js';
 
 export async function renderList(container, { categoryDef }){
     container.innerHTML = '';

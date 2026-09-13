@@ -1,4 +1,4 @@
-import getIcon from './icons.js';
+import { getIcon } from './icons.js';
 
 export function renderProfile(container, config){
     const profile = config.profile?.profile;

@@ -1,5 +1,6 @@
 ---
 title: 相簿暨作品集部落格模板
+description: 使用原生 HTML、CSS 與 JavaScript 製作的 YAML 驅動部落格模板，支援 Markdown、相簿、SSG 與 SEO。
 date: 2026-07-24
 tags: [project]
 ---
@@ -48,25 +49,33 @@ website/
 |   ├── markdownParser.js           # 分段讀取 .md 檔案 (header 及正文)
 |   ├── configLoader.js             # 載入設定檔
 |   ├── contentIndex.js             # 讀取文章及相簿
-|   └── contentScanner.js           # 更新檔案後更新 mainfest
+|   ├── contentScanner.js           # 掃描內容並更新 manifest
+|   └── staticGenerator.js          # 產生靜態頁面、Sitemap 與 robots.txt
 └── public/
     ├── css/style.css
     ├── js/
-    │   ├── app.js                  # 路由(hash-based)+ 啟動
+    │   ├── app.js                  # History API 路由、站內導覽與啟動
     │   └── vendor/
     |       ├── marked.esm.js       # 渲染 markdown
     |       └── highlight.esm.js    # 程式碼嵌入 highlight
     └── images/                     # 大頭照、背景圖
+├── dist/                           # npm run build 自動產生的部署目錄
+│   ├── index.html
+│   ├── article/<slug>/index.html
+│   ├── sitemap.xml
+│   └── robots.txt
 ```  
 
 # 三、使用說明  
 這份網站的所有**內容**跟**外觀**都放在 `config/` 和 `content/`，不需要碰任何程式碼。  
 
-* 每次改完 `content/` 底下的檔案(新增/刪除/改名文章、專案或相簿)之後須在 `website/` 目錄下執行
+* 每次改完 `content/` 或 `config/` 後，在 `website/` 目錄下執行：
     ```
-    node engine/contentScanner.js
+    npm run build
     ```
-    改 `config/*.yaml` 則直接重新整理網頁即可。  
+    這會更新 manifest、重建 `dist/`、產生所有 HTML，以及更新 sitemap 和 robots.txt。部署時網站根目錄應指向 `dist/`。
+
+建置後每篇文章、專案與相簿都有獨立 HTML；JavaScript 停用時仍可閱讀內容。瀏覽器載入 JavaScript 後，站內連結會使用 History API 導覽，不必整頁重新載入。
 
 ## 1. `config/site.yaml` — 網站基本資訊  
 ```yaml
@@ -184,7 +193,7 @@ home:
 categories:
     posts:
         path: posts              # 對應 content/posts/ 資料夾
-        route: article           # 網址是 #/article
+        route: article           # 網址是 /article/
         renderer: article        # 用「文章列表 + 內文」樣板顯示
         label: Article            # 頁面標題文字
 
@@ -217,7 +226,7 @@ categories:
         url: /notes
     ```
 4. 在 `content/notes/` 底下依照第 7 節「文章」的格式新增 `.md` 檔案
-5. 執行 `node engine/contentScanner.js`
+5. 執行 `npm run build`
 
 ## 7. `content/posts` — 文章(Article)  
 文章放在 `content/posts/`，**一個 `.md` 檔案 = 一篇文章**，檔名(不含 `.md`)即為網址  
@@ -242,23 +251,24 @@ tags: tag
 ```javascript
 console.log("hello");
 ```
-存檔後執行 `node engine/contentScanner.js`，重新整理網頁，Article 列表就會出現這篇文章，最新日期排在最前面。  
+存檔後執行 `npm run build`，Article 列表、文章 HTML 與 sitemap 就會自動更新，最新日期排在最前面。  
 
 header 欄位:   
 * `title`: 文章標題(列表和內頁都會用到)  
 * `date`: 日期，格式 `YYYY-MM-DD`，用來排序，缺少的話會被排到最後面  
 * `category`: 目前主要是資料欄位，可自由填寫  
-* `tags`: 清單格式 `[a, b, c]`，會顯示在日期旁邊，用頓號分隔  
+* `tags`: 清單格式 `[a, b, c]`，會顯示在日期旁邊，用頓號分隔
+* `description`: 選填，作為搜尋結果、Open Graph 的摘要；未填時建置器會從正文擷取摘要
 
-網址代稱(slug)就是檔名，例如上例會是 `#/article/example`。  
+網址代稱(slug)就是檔名，例如上例會是 `/article/example/`。舊版 `#/article/example` 連結進站時會自動轉址。
 
 ### 編輯 / 刪除文章  
-* 編輯: 直接改對應 `.md` 檔案內容，存檔重新整理即可，不用重跑 scanner  
-* 刪除: 刪掉檔案，執行一次 `node engine/contentScanner.js`  
-* 改檔名(改網址): 改完檔名也要重跑 scanner  
+* 編輯: 直接改對應 `.md` 檔案內容，執行 `npm run build`
+* 刪除: 刪掉檔案後執行 `npm run build`
+* 改檔名(改網址): 改完後執行 `npm run build`
 
 ## 8. `content/projects` — 專案(Projects)  
-同第 7 點，但檔案放在 `content/projects/` 資料夾底下，網址會是 `#/projects/檔名`。  
+同第 7 點，但檔案放在 `content/projects/` 資料夾底下，網址會是 `/projects/檔名/`。  
 
 ## 9. `content/photography` — 相簿  
 相簿放在 `content/photography/<分類>/<相簿代稱>/`，一個資料夾就是一本相簿，裡面放一個 `album.yaml`(相簿資訊)和照片檔案本身。  
@@ -279,8 +289,8 @@ header 欄位:
         - 002.jpg
         - 003.jpg
     ```
-4. 執行 `node engine/contentScanner.js`  
-5. 重新整理網頁，Photography 列表 (或導覽列 Film / Digital 下拉選單，依`category` 而定) 就會出現這本相簿  
+4. 執行 `npm run build`
+5. Photography 列表、相簿 HTML、Sitemap 都會自動更新；導覽列 Film / Digital 下拉選單仍依 `category` 顯示。
 
 ### 換封面  
 封面 = `images` 清單第一張。把想當封面的照片檔名移到第一個位置即可:  
@@ -291,8 +301,7 @@ images:
     - 002.jpg
 ```
 
-存檔重新整理即可看到變化，不用重跑 scanner(除非你新增/刪除/改名了照片
-檔案或相簿資料夾本身)。  
+存檔後執行 `npm run build` 即可同步更新相簿頁；新增、刪除或改名照片、相簿資料夾後也使用同一個指令。  
 
 ### 新增照片到現有相簿
 把新照片丟進相簿資料夾，並在 `album.yaml` 的 `images` 清單加上檔名: 

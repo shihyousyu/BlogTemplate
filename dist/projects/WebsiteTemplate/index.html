@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>相簿暨作品集部落格模板 — My Blog</title>
-    <meta name="description" content="一、動機 作者買了網域想要活用，但懶得找框架，因此做了這個專案。 二、專案架構 website/ ├── index.html ├── package.json ├── README.md ├── config/ │ ├── site.yaml # 網站標題、語言 │ ├── profile.yaml # 側欄大…" />
+    <meta name="description" content="使用原生 HTML、CSS 與 JavaScript 製作的 YAML 驅動部落格模板，支援 Markdown、相簿、SSG 與 SEO。" />
     <link rel="canonical" href="https://blog.example.com/projects/WebsiteTemplate/" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="相簿暨作品集部落格模板 — My Blog" />
-    <meta property="og:description" content="一、動機 作者買了網域想要活用，但懶得找框架，因此做了這個專案。 二、專案架構 website/ ├── index.html ├── package.json ├── README.md ├── config/ │ ├── site.yaml # 網站標題、語言 │ ├── profile.yaml # 側欄大…" />
+    <meta property="og:description" content="使用原生 HTML、CSS 與 JavaScript 製作的 YAML 驅動部落格模板，支援 Markdown、相簿、SSG 與 SEO。" />
     <meta property="og:url" content="https://blog.example.com/projects/WebsiteTemplate/" />
     <link rel="stylesheet" href="/public/css/style.css" />
     <link rel="icon" href="/public/images/avatar.png" />
@@ -58,21 +58,28 @@
 |   ├── markdownParser.js           <span class="hljs-comment"># 分段讀取 .md 檔案 (header 及正文)</span>
 |   ├── configLoader.js             <span class="hljs-comment"># 載入設定檔</span>
 |   ├── contentIndex.js             <span class="hljs-comment"># 讀取文章及相簿</span>
-|   └── contentScanner.js           <span class="hljs-comment"># 更新檔案後更新 mainfest</span>
+|   ├── contentScanner.js           <span class="hljs-comment"># 掃描內容並更新 manifest</span>
+|   └── staticGenerator.js          <span class="hljs-comment"># 產生靜態頁面、Sitemap 與 robots.txt</span>
 └── public/
     ├── css/style.css
     ├── js/
-    │   ├── app.js                  <span class="hljs-comment"># 路由(hash-based)+ 啟動</span>
+    │   ├── app.js                  <span class="hljs-comment"># History API 路由、站內導覽與啟動</span>
     │   └── vendor/
     |       ├── marked.esm.js       <span class="hljs-comment"># 渲染 markdown</span>
     |       └── highlight.esm.js    <span class="hljs-comment"># 程式碼嵌入 highlight</span>
-    └── images/                     <span class="hljs-comment"># 大頭照、背景圖</span></code></pre>
+    └── images/                     <span class="hljs-comment"># 大頭照、背景圖</span>
+├── dist/                           <span class="hljs-comment"># npm run build 自動產生的部署目錄</span>
+│   ├── index.html
+│   ├── article/&lt;slug&gt;/index.html
+│   ├── sitemap.xml
+│   └── robots.txt</code></pre>
 <h1>三、使用說明</h1>
 <p>這份網站的所有<strong>內容</strong>跟<strong>外觀</strong>都放在 <code>config/</code> 和 <code>content/</code>，不需要碰任何程式碼。  </p>
 <ul>
-<li>每次改完 <code>content/</code> 底下的檔案(新增/刪除/改名文章、專案或相簿)之後須在 <code>website/</code> 目錄下執行<pre><code class="hljs">node engine/contentScanner.js</code></pre>
-  改 <code>config/*.yaml</code> 則直接重新整理網頁即可。</li>
+<li>每次改完 <code>content/</code> 或 <code>config/</code> 後，在 <code>website/</code> 目錄下執行：<pre><code class="hljs">npm run build</code></pre>
+  這會更新 manifest、重建 <code>dist/</code>、產生所有 HTML，以及更新 sitemap 和 robots.txt。部署時網站根目錄應指向 <code>dist/</code>。</li>
 </ul>
+<p>建置後每篇文章、專案與相簿都有獨立 HTML；JavaScript 停用時仍可閱讀內容。瀏覽器載入 JavaScript 後，站內連結會使用 History API 導覽，不必整頁重新載入。</p>
 <h2>1. <code>config/site.yaml</code> — 網站基本資訊</h2>
 <pre><code class="hljs language-yaml"><span class="hljs-attr">site:</span>
     <span class="hljs-attr">title:</span> <span class="hljs-string">blog</span>                 <span class="hljs-comment"># 網站標題、頁尾版權文字</span>
@@ -173,7 +180,7 @@
 <pre><code class="hljs language-yaml"><span class="hljs-attr">categories:</span>
     <span class="hljs-attr">posts:</span>
         <span class="hljs-attr">path:</span> <span class="hljs-string">posts</span>              <span class="hljs-comment"># 對應 content/posts/ 資料夾</span>
-        <span class="hljs-attr">route:</span> <span class="hljs-string">article</span>           <span class="hljs-comment"># 網址是 #/article</span>
+        <span class="hljs-attr">route:</span> <span class="hljs-string">article</span>           <span class="hljs-comment"># 網址是 /article/</span>
         <span class="hljs-attr">renderer:</span> <span class="hljs-string">article</span>        <span class="hljs-comment"># 用「文章列表 + 內文」樣板顯示</span>
         <span class="hljs-attr">label:</span> <span class="hljs-string">Article</span>            <span class="hljs-comment"># 頁面標題文字</span>
 
@@ -201,7 +208,7 @@
     <span class="hljs-attr">url:</span> <span class="hljs-string">/notes</span></code></pre>
 </li>
 <li>在 <code>content/notes/</code> 底下依照第 7 節「文章」的格式新增 <code>.md</code> 檔案</li>
-<li>執行 <code>node engine/contentScanner.js</code></li>
+<li>執行 <code>npm run build</code></li>
 </ol>
 <h2>7. <code>content/posts</code> — 文章(Article)</h2>
 <p>文章放在 <code>content/posts/</code>，<strong>一個 <code>.md</code> 檔案 = 一篇文章</strong>，檔名(不含 <code>.md</code>)即為網址  </p>
@@ -220,23 +227,24 @@
 <span class="hljs-comment">## 小標題</span></code></pre>
 <p>也可以放程式碼區塊:   </p>
 <pre><code class="hljs language-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;hello&quot;</span>);</code></pre>
-<p>存檔後執行 <code>node engine/contentScanner.js</code>，重新整理網頁，Article 列表就會出現這篇文章，最新日期排在最前面。  </p>
+<p>存檔後執行 <code>npm run build</code>，Article 列表、文章 HTML 與 sitemap 就會自動更新，最新日期排在最前面。  </p>
 <p>header 欄位:   </p>
 <ul>
 <li><code>title</code>: 文章標題(列表和內頁都會用到)  </li>
 <li><code>date</code>: 日期，格式 <code>YYYY-MM-DD</code>，用來排序，缺少的話會被排到最後面  </li>
 <li><code>category</code>: 目前主要是資料欄位，可自由填寫  </li>
 <li><code>tags</code>: 清單格式 <code>[a, b, c]</code>，會顯示在日期旁邊，用頓號分隔</li>
+<li><code>description</code>: 選填，作為搜尋結果、Open Graph 的摘要；未填時建置器會從正文擷取摘要</li>
 </ul>
-<p>網址代稱(slug)就是檔名，例如上例會是 <code>#/article/example</code>。  </p>
+<p>網址代稱(slug)就是檔名，例如上例會是 <code>/article/example/</code>。舊版 <code>#/article/example</code> 連結進站時會自動轉址。</p>
 <h3>編輯 / 刪除文章</h3>
 <ul>
-<li>編輯: 直接改對應 <code>.md</code> 檔案內容，存檔重新整理即可，不用重跑 scanner  </li>
-<li>刪除: 刪掉檔案，執行一次 <code>node engine/contentScanner.js</code>  </li>
-<li>改檔名(改網址): 改完檔名也要重跑 scanner</li>
+<li>編輯: 直接改對應 <code>.md</code> 檔案內容，執行 <code>npm run build</code></li>
+<li>刪除: 刪掉檔案後執行 <code>npm run build</code></li>
+<li>改檔名(改網址): 改完後執行 <code>npm run build</code></li>
 </ul>
 <h2>8. <code>content/projects</code> — 專案(Projects)</h2>
-<p>同第 7 點，但檔案放在 <code>content/projects/</code> 資料夾底下，網址會是 <code>#/projects/檔名</code>。  </p>
+<p>同第 7 點，但檔案放在 <code>content/projects/</code> 資料夾底下，網址會是 <code>/projects/檔名/</code>。  </p>
 <h2>9. <code>content/photography</code> — 相簿</h2>
 <p>相簿放在 <code>content/photography/&lt;分類&gt;/&lt;相簿代稱&gt;/</code>，一個資料夾就是一本相簿，裡面放一個 <code>album.yaml</code>(相簿資訊)和照片檔案本身。  </p>
 <h3>新增一本相簿</h3>
@@ -254,8 +262,8 @@
     <span class="hljs-bullet">-</span> <span class="hljs-number">002.</span><span class="hljs-string">jpg</span>
     <span class="hljs-bullet">-</span> <span class="hljs-number">003.</span><span class="hljs-string">jpg</span></code></pre>
 </li>
-<li>執行 <code>node engine/contentScanner.js</code>  </li>
-<li>重新整理網頁，Photography 列表 (或導覽列 Film / Digital 下拉選單，依<code>category</code> 而定) 就會出現這本相簿</li>
+<li>執行 <code>npm run build</code></li>
+<li>Photography 列表、相簿 HTML、Sitemap 都會自動更新；導覽列 Film / Digital 下拉選單仍依 <code>category</code> 顯示。</li>
 </ol>
 <h3>換封面</h3>
 <p>封面 = <code>images</code> 清單第一張。把想當封面的照片檔名移到第一個位置即可:  </p>
@@ -263,8 +271,7 @@
     <span class="hljs-bullet">-</span> <span class="hljs-number">003.</span><span class="hljs-string">jpg</span>   <span class="hljs-comment"># 換到第一個，變成新封面</span>
     <span class="hljs-bullet">-</span> <span class="hljs-number">001.</span><span class="hljs-string">jpg</span>
     <span class="hljs-bullet">-</span> <span class="hljs-number">002.</span><span class="hljs-string">jpg</span></code></pre>
-<p>存檔重新整理即可看到變化，不用重跑 scanner(除非你新增/刪除/改名了照片
-檔案或相簿資料夾本身)。  </p>
+<p>存檔後執行 <code>npm run build</code> 即可同步更新相簿頁；新增、刪除或改名照片、相簿資料夾後也使用同一個指令。  </p>
 <h3>新增照片到現有相簿</h3>
 <p>把新照片丟進相簿資料夾，並在 <code>album.yaml</code> 的 <code>images</code> 清單加上檔名: </p>
 <pre><code class="hljs language-yaml"><span class="hljs-attr">images:</span>

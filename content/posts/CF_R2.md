@@ -1,5 +1,6 @@
 ---
 title: 優化本部落格專案: 將圖片存於 Cloudflare R2 以 rclone 管理並改寫 contentIndex.js
+description: 說明如何使用 Cloudflare R2 與 rclone 管理相簿照片，並調整部落格圖片資源的讀取方式。
 date: 2026-07-26
 category: notes
 tags: [notes]

@@ -47,6 +47,10 @@ function summaryFromHtml(html) {
     return text.length > 160 ? `${text.slice(0, 157).trimEnd()}…` : text;
 }
 
+function escapeXml(value) {
+    return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
 function metaTags({ title, description, canonical, image }) {
     const safeTitle = escapeHtml(title);
     const safeDescription = escapeHtml(description || '');
@@ -189,7 +193,7 @@ function main() {
         const html = renderMarkdown(body);
         writePage(config, { route: '/about/', title: `${frontMatter.title || 'About'} — ${siteTitle}`, description: frontMatter.description || summaryFromHtml(html), content: `<article class="post-detail"><h1>${escapeHtml(frontMatter.title || 'About')}</h1><div class="post-body">${stripDuplicateTitle(html, frontMatter.title || 'About')}</div></article>`, siteUrl }, sitemap);
     }
-    const urls = [...sitemap.entries()].map(([route, lastmod]) => `  <url><loc>${siteUrl}${route}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}</url>`).join('\n');
+    const urls = [...sitemap.entries()].map(([route, lastmod]) => `  <url><loc>${escapeXml(`${siteUrl}${route}`)}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}</url>`).join('\n');
     fs.writeFileSync(path.join(DIST, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
     fs.writeFileSync(path.join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`);
     console.log(`[staticGenerator] wrote ${sitemap.size} page(s) to dist/`);

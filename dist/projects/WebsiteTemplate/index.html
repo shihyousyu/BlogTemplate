@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme-mode="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>相簿暨作品集部落格模板 — My Blog</title>
+    <meta name="description" content="一、動機 作者買了網域想要活用，但懶得找框架，因此做了這個專案。 二、專案架構 website/ ├── index.html ├── package.json ├── README.md ├── config/ │ ├── site.yaml # 網站標題、語言 │ ├── profile.yaml # 側欄大…" />
+    <link rel="canonical" href="https://blog.example.com/projects/WebsiteTemplate/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="相簿暨作品集部落格模板 — My Blog" />
+    <meta property="og:description" content="一、動機 作者買了網域想要活用，但懶得找框架，因此做了這個專案。 二、專案架構 website/ ├── index.html ├── package.json ├── README.md ├── config/ │ ├── site.yaml # 網站標題、語言 │ ├── profile.yaml # 側欄大…" />
+    <meta property="og:url" content="https://blog.example.com/projects/WebsiteTemplate/" />
+    <link rel="stylesheet" href="/public/css/style.css" />
+    <link rel="icon" href="/public/images/avatar.png" />
+    <style>:root{--color-primary:#7bb8d9;--color-secondary:#e8a89c;--color-background:#0d1016;--color-surface:#161a22;--color-text:#e5e8ee;--color-muted:#7f8794;--navbar-opacity:0.4;--navbar-radius:999px;--bg-layers:linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url("/public/images/background.jpg")}</style>
+</head>
+<body>
+    <header id="navbar-root" class="navbar navbar--blur"><div class="navbar-list"><div class="navbar-item"><a class="navbar-link" href="/">Home</a></div><div class="navbar-item"><a class="navbar-link" href="/article/">Article</a></div><div class="navbar-item has-children"><a class="navbar-link" href="/photography/">Photography</a><span class="ssg-subnav"><a class="navbar-dropdown-link" href="/photography/film/">Film</a><a class="navbar-dropdown-link" href="/photography/digital/">Digital</a></span></div><div class="navbar-item"><a class="navbar-link is-active" href="/projects/">Projects</a></div><div class="navbar-item"><a class="navbar-link" href="/about/">About</a></div></div></header>
+    <div class="layout"><aside id="profile-root" class="profile-card"><div class="profile-avatar-frame"><img class="profile-avatar" src="/public/images/avatar.png" alt="Your Name" /></div><h2 class="profile-name">Your Name</h2><div class="profile-description"><p>text</p></div><div class="profile-links"><a class="profile-link-btn" href="https://github.com/shihyousyu" aria-label="GitHub" target="_blank" rel="noopener noreferrer">GitHub</a></div></aside><main id="content-root" data-route="/projects/WebsiteTemplate"><article class="post-detail"><a class="back-link" href="/projects/">← Projects</a><h1>相簿暨作品集部落格模板</h1><div class="post-meta">2026-07-24 · project</div><div class="post-body"><h1>一、動機</h1>
+<p>作者買了網域想要活用，但懶得找框架，因此做了這個專案。  </p>
+<h1>二、專案架構</h1>
+<pre><code class="hljs">website/
+├── index.html
+├── package.json
+├── README.md
+├── config/
+│   ├── site.yaml                   <span class="hljs-comment"># 網站標題、語言</span>
+│   ├── profile.yaml                <span class="hljs-comment"># 側欄大頭照、名稱、簡介</span>
+│   ├── navbar.yaml                 <span class="hljs-comment"># 導覽列項目、樣式</span>
+│   ├── theme.yaml                  <span class="hljs-comment"># 顏色、背景、導覽列外觀</span>
+│   ├── layout.yaml                 <span class="hljs-comment"># 首頁區塊順序/標題/顯示筆數</span>
+│   └── content.yaml                <span class="hljs-comment"># 路徑/網址/樣板/標題</span>
+├── content/
+│   ├── posts/
+|   |   ├── *.md
+|   |   └── manifest.json(自動產生)
+│   ├── projects/
+|   |   ├── *.md
+|   |   └── manifest.json(自動產生)
+│   ├── photography/
+|   |   ├── &lt;分類&gt;/
+|   |   |   └── &lt;相簿名稱&gt;/
+|   |   |       ├── *.jpg
+|   |   |       └── album.yaml
+|   |   └── manifest.json(自動產生)
+│   └── about.md                    <span class="hljs-comment"># 固定路由頁面，格式與文章相同，但不需要 header</span>
+├── components/
+|   ├── Navbar.js                   <span class="hljs-comment"># 繪製導覽列</span>
+|   ├── Profile.js                  <span class="hljs-comment"># 繪製左側個人檔案</span>
+|   ├── Markdown.js                 <span class="hljs-comment"># 渲染 markdown</span>
+|   ├── Gallery.js                  <span class="hljs-comment"># 相簿樣板</span>
+|   ├── Renderer.js                 <span class="hljs-comment"># 分類渲染</span>
+|   ├── Home.js                     <span class="hljs-comment"># 繪製首頁</span>
+|   ├── Footer.js                   <span class="hljs-comment"># 繪製頁尾</span>
+|   └── util.js                     <span class="hljs-comment"># 共用工具</span>
+├── engine/
+|   ├── yamlLite.js                 <span class="hljs-comment"># 簡化版 yaml 解析器</span>
+|   ├── markdownParser.js           <span class="hljs-comment"># 分段讀取 .md 檔案 (header 及正文)</span>
+|   ├── configLoader.js             <span class="hljs-comment"># 載入設定檔</span>
+|   ├── contentIndex.js             <span class="hljs-comment"># 讀取文章及相簿</span>
+|   └── contentScanner.js           <span class="hljs-comment"># 更新檔案後更新 mainfest</span>
+└── public/
+    ├── css/style.css
+    ├── js/
+    │   ├── app.js                  <span class="hljs-comment"># 路由(hash-based)+ 啟動</span>
+    │   └── vendor/
+    |       ├── marked.esm.js       <span class="hljs-comment"># 渲染 markdown</span>
+    |       └── highlight.esm.js    <span class="hljs-comment"># 程式碼嵌入 highlight</span>
+    └── images/                     <span class="hljs-comment"># 大頭照、背景圖</span></code></pre>
+<h1>三、使用說明</h1>
+<p>這份網站的所有<strong>內容</strong>跟<strong>外觀</strong>都放在 <code>config/</code> 和 <code>content/</code>，不需要碰任何程式碼。  </p>
+<ul>
+<li>每次改完 <code>content/</code> 底下的檔案(新增/刪除/改名文章、專案或相簿)之後須在 <code>website/</code> 目錄下執行<pre><code class="hljs">node engine/contentScanner.js</code></pre>
+  改 <code>config/*.yaml</code> 則直接重新整理網頁即可。</li>
+</ul>
+<h2>1. <code>config/site.yaml</code> — 網站基本資訊</h2>
+<pre><code class="hljs language-yaml"><span class="hljs-attr">site:</span>
+    <span class="hljs-attr">title:</span> <span class="hljs-string">blog</span>                 <span class="hljs-comment"># 網站標題、頁尾版權文字</span>
+    <span class="hljs-attr">tagline:</span>                    <span class="hljs-comment"># 頁尾標題下方的說明文字，可為空</span>
+    <span class="hljs-attr">language:</span> <span class="hljs-string">zh-TW</span>             <span class="hljs-comment"># &lt;html lang=&quot;..&quot;&gt;，影響瀏覽器判斷語言，不影響顯示文字</span>
+    <span class="hljs-attr">url:</span> <span class="hljs-string">blog.example.com</span>       <span class="hljs-comment"># 目前僅作紀錄用途，網站本身程式碼沒有讀取這個欄位</span></code></pre>
+<h2>2. <code>config/profile.yaml</code> — 側欄個人資料</h2>
+<pre><code class="hljs language-yaml"><span class="hljs-attr">profile:</span>
+    <span class="hljs-attr">name:</span> <span class="hljs-string">Your</span> <span class="hljs-string">Name</span>
+    <span class="hljs-attr">avatar:</span>
+        <span class="hljs-attr">image:</span> <span class="hljs-string">/public/images/avatar.png</span>   <span class="hljs-comment"># 頭像路徑</span>
+    <span class="hljs-attr">description:</span>                           <span class="hljs-comment"># 側欄簡介</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;text&quot;</span>                           <span class="hljs-comment"># 可多行</span>
+    <span class="hljs-attr">links:</span>                                 <span class="hljs-comment"># 側欄按鈕，可不填</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">GitHub</span>
+            <span class="hljs-attr">url:</span> <span class="hljs-string">https://github.com/yourname</span>
+            <span class="hljs-attr">icon:</span> <span class="hljs-string">github</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Email</span>
+            <span class="hljs-attr">url:</span> <span class="hljs-string">mailto:you@example.com</span>
+            <span class="hljs-attr">icon:</span> <span class="hljs-string">mail</span></code></pre>
+<p>可用的 <code>icon</code> 值：<code>github</code>、<code>twitter</code>（或 <code>x</code>）、<code>linkedin</code>、<code>instagram</code>、<code>mail</code>、<code>rss</code>、<code>globe</code>，不支援會顯示通用連結圖示。  </p>
+<h2>3. <code>config/navbar.yaml</code> — 導覽列</h2>
+<pre><code class="hljs language-yaml"><span class="hljs-attr">navbar:</span>
+    <span class="hljs-attr">enabled:</span> <span class="hljs-literal">true</span>              <span class="hljs-comment"># 是否顯示導覽列</span>
+
+    <span class="hljs-attr">style:</span>
+        <span class="hljs-attr">type:</span> <span class="hljs-string">floating</span>          <span class="hljs-comment"># 目前只有 floating 這個樣式</span>
+        <span class="hljs-attr">blur:</span> <span class="hljs-literal">true</span>               <span class="hljs-comment"># 是否有模糊效果</span>
+
+    <span class="hljs-attr">scroll:</span>
+        <span class="hljs-attr">direction:</span> <span class="hljs-string">horizontal</span>    <span class="hljs-comment"># 項目太多時導覽列允許橫向捲動</span>
+
+    <span class="hljs-attr">items:</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Home</span>
+            <span class="hljs-attr">url:</span> <span class="hljs-string">/</span>
+
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Article</span>
+            <span class="hljs-attr">url:</span> <span class="hljs-string">/article</span>
+
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Photography</span>
+            <span class="hljs-attr">url:</span> <span class="hljs-string">/photography</span>
+            <span class="hljs-attr">children:</span>                    <span class="hljs-comment"># 下拉選單</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Film</span>
+                    <span class="hljs-attr">url:</span> <span class="hljs-string">/photography/film</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Digital</span>
+                    <span class="hljs-attr">url:</span> <span class="hljs-string">/photography/digital</span>
+
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Projects</span>
+            <span class="hljs-attr">url:</span> <span class="hljs-string">/projects</span>
+
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">About</span>
+            <span class="hljs-attr">url:</span> <span class="hljs-string">/about</span></code></pre>
+<h2>4. <code>config/theme.yaml</code> — 顏色與外觀</h2>
+<pre><code class="hljs language-yaml"><span class="hljs-attr">theme:</span>
+    <span class="hljs-attr">default:</span> <span class="hljs-string">dark</span>                   <span class="hljs-comment"># 網站第一次載入時使用的模式，dark 或 light</span>
+    <span class="hljs-attr">colors:</span>
+        <span class="hljs-attr">dark:</span>
+            <span class="hljs-attr">primary:</span> <span class="hljs-string">&quot;#7bb8d9&quot;</span>          <span class="hljs-comment"># 連結、按鈕、選中狀態</span>
+            <span class="hljs-attr">secondary:</span> <span class="hljs-string">&quot;#e8a89c&quot;</span>        <span class="hljs-comment"># 程式碼關鍵字、數字等</span>
+            <span class="hljs-attr">background:</span> <span class="hljs-string">&quot;#0d1016&quot;</span>       <span class="hljs-comment"># 純色模式，或圖片模式下的底色</span>
+            <span class="hljs-attr">surface:</span> <span class="hljs-string">&quot;#161a22&quot;</span>          <span class="hljs-comment"># 卡片、導覽列、程式碼區塊的底色</span>
+            <span class="hljs-attr">text:</span> <span class="hljs-string">&quot;#e5e8ee&quot;</span>             <span class="hljs-comment"># 主要文字顏色</span>
+            <span class="hljs-attr">muted:</span> <span class="hljs-string">&quot;#7f8794&quot;</span>            <span class="hljs-comment"># 日期、說明文字顏色</span>
+        <span class="hljs-attr">light:</span>
+            <span class="hljs-attr">primary:</span> <span class="hljs-string">&quot;#2f6690&quot;</span>
+            <span class="hljs-attr">secondary:</span> <span class="hljs-string">&quot;#c96a4e&quot;</span>
+            <span class="hljs-attr">background:</span> <span class="hljs-string">&quot;#f6f4ef&quot;</span>
+            <span class="hljs-attr">surface:</span> <span class="hljs-string">&quot;#ffffff&quot;</span>
+            <span class="hljs-attr">text:</span> <span class="hljs-string">&quot;#22242a&quot;</span>
+            <span class="hljs-attr">muted:</span> <span class="hljs-string">&quot;#6b7280&quot;</span>
+    <span class="hljs-attr">background:</span>
+        <span class="hljs-attr">image:</span> <span class="hljs-string">&quot;/public/images/background.jpg&quot;</span>  <span class="hljs-comment"># 留空 = 純色背景</span>
+        <span class="hljs-attr">overlay:</span>
+            <span class="hljs-attr">dark:</span> <span class="hljs-number">0.8</span>             <span class="hljs-comment"># 暗色模式的遮罩深淺，0~1（黑色遮罩）</span>
+            <span class="hljs-attr">light:</span> <span class="hljs-number">0.2</span>            <span class="hljs-comment"># 淺色模式的遮罩深淺，0~1（白色遮罩）</span>
+    <span class="hljs-attr">navbar:</span>
+        <span class="hljs-attr">opacity:</span> <span class="hljs-number">0.55</span>            <span class="hljs-comment"># 導覽列不透明度，0~1</span>
+        <span class="hljs-attr">radius:</span> <span class="hljs-number">999</span>              <span class="hljs-comment"># 導覽列 &amp; 按鈕圓角，0~999</span></code></pre>
+<p>右下角有一顆圓形按鈕可以切換 dark / light，使用者點過一次之後，選擇會存在瀏覽器 <code>localStorage</code>，下次造訪會記得上次選的模式；沒點過的話就用 <code>default</code> 那個模式。</p>
+<h2>5. <code>config/layout.yaml</code> — 首頁區塊</h2>
+<pre><code class="hljs language-yaml"><span class="hljs-attr">home:</span>
+    <span class="hljs-attr">components:</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">key:</span> <span class="hljs-string">intro</span>                        <span class="hljs-comment"># 自我介紹欄位</span>
+            <span class="hljs-attr">title:</span> <span class="hljs-string">Hello,</span> <span class="hljs-string">World</span>             <span class="hljs-comment"># 標題文字，可自由更改</span>
+            <span class="hljs-attr">text:</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;text&quot;</span>
+            <span class="hljs-attr">linkText:</span> <span class="hljs-string">閱讀更多關於我</span> <span class="hljs-string">-&gt;</span>
+            <span class="hljs-attr">linkUrl:</span> <span class="hljs-string">/about</span>
+
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">key:</span> <span class="hljs-string">recentPosts</span>                  <span class="hljs-comment"># 固定值，代表 &quot;最新文章&quot; 區塊</span>
+            <span class="hljs-attr">title:</span> <span class="hljs-string">Recent</span> <span class="hljs-string">Posts</span>
+            <span class="hljs-attr">limit:</span> <span class="hljs-number">3</span>                        <span class="hljs-comment"># 顯示幾篇</span>
+
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">key:</span> <span class="hljs-string">featuredPhotography</span>          <span class="hljs-comment"># 固定值，代表 &quot;精選攝影&quot; 區塊</span>
+            <span class="hljs-attr">title:</span> <span class="hljs-string">Featured</span> <span class="hljs-string">Photography</span>
+            <span class="hljs-attr">limit:</span> <span class="hljs-number">4</span>                        <span class="hljs-comment"># 顯示幾本相簿</span></code></pre>
+<h2>6. <code>config/content.yaml</code> — 內容分類總開關</h2>
+<pre><code class="hljs language-yaml"><span class="hljs-attr">categories:</span>
+    <span class="hljs-attr">posts:</span>
+        <span class="hljs-attr">path:</span> <span class="hljs-string">posts</span>              <span class="hljs-comment"># 對應 content/posts/ 資料夾</span>
+        <span class="hljs-attr">route:</span> <span class="hljs-string">article</span>           <span class="hljs-comment"># 網址是 #/article</span>
+        <span class="hljs-attr">renderer:</span> <span class="hljs-string">article</span>        <span class="hljs-comment"># 用「文章列表 + 內文」樣板顯示</span>
+        <span class="hljs-attr">label:</span> <span class="hljs-string">Article</span>            <span class="hljs-comment"># 頁面標題文字</span>
+
+    <span class="hljs-attr">photography:</span>
+        <span class="hljs-attr">path:</span> <span class="hljs-string">photography</span>
+        <span class="hljs-attr">route:</span> <span class="hljs-string">photography</span>
+        <span class="hljs-attr">renderer:</span> <span class="hljs-string">gallery</span>         <span class="hljs-comment"># 用「相簿格狀列表 + 相簿內頁」樣板顯示</span>
+        <span class="hljs-attr">label:</span> <span class="hljs-string">Photography</span>
+
+    <span class="hljs-attr">projects:</span>
+        <span class="hljs-attr">path:</span> <span class="hljs-string">projects</span>
+        <span class="hljs-attr">route:</span> <span class="hljs-string">projects</span>
+        <span class="hljs-attr">renderer:</span> <span class="hljs-string">article</span>
+        <span class="hljs-attr">label:</span> <span class="hljs-string">Projects</span></code></pre>
+<h3>新增一整個新的內容分類(例如想加一個「Notes」筆記分類):</h3>
+<ol>
+<li>在 <code>config/content.yaml</code> 的 <code>categories</code> 底下新增一段，例如: <pre><code class="hljs language-yaml"><span class="hljs-attr">notes:</span>
+    <span class="hljs-attr">path:</span> <span class="hljs-string">notes</span>
+    <span class="hljs-attr">route:</span> <span class="hljs-string">notes</span>
+    <span class="hljs-attr">renderer:</span> <span class="hljs-string">article</span>
+    <span class="hljs-attr">label:</span> <span class="hljs-string">Notes</span></code></pre>
+</li>
+<li>在 <code>content/</code> 底下建立對應資料夾: <code>content/notes/</code></li>
+<li>在 <code>config/navbar.yaml</code> 的 <code>items</code> 加一筆讓使用者點得到: <pre><code class="hljs language-yaml"><span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Notes</span>
+    <span class="hljs-attr">url:</span> <span class="hljs-string">/notes</span></code></pre>
+</li>
+<li>在 <code>content/notes/</code> 底下依照第 7 節「文章」的格式新增 <code>.md</code> 檔案</li>
+<li>執行 <code>node engine/contentScanner.js</code></li>
+</ol>
+<h2>7. <code>content/posts</code> — 文章(Article)</h2>
+<p>文章放在 <code>content/posts/</code>，<strong>一個 <code>.md</code> 檔案 = 一篇文章</strong>，檔名(不含 <code>.md</code>)即為網址  </p>
+<h3>新增一篇文章</h3>
+<p>在 <code>content/posts/</code> 底下新增檔案，例如 <code>content/posts/example.md</code>:   </p>
+<pre><code class="hljs"><span class="hljs-meta">---</span>
+<span class="hljs-attr">title:</span> <span class="hljs-string">example</span>
+<span class="hljs-attr">date:</span> <span class="hljs-string">yyyy-mm-dd</span>
+<span class="hljs-attr">category:</span> <span class="hljs-string">category</span>
+<span class="hljs-attr">tags:</span> <span class="hljs-string">tag</span>
+<span class="hljs-meta">---
+</span>
+<span class="hljs-comment"># 標題</span>
+<span class="hljs-string">內文</span>
+
+<span class="hljs-comment">## 小標題</span></code></pre>
+<p>也可以放程式碼區塊:   </p>
+<pre><code class="hljs language-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;hello&quot;</span>);</code></pre>
+<p>存檔後執行 <code>node engine/contentScanner.js</code>，重新整理網頁，Article 列表就會出現這篇文章，最新日期排在最前面。  </p>
+<p>header 欄位:   </p>
+<ul>
+<li><code>title</code>: 文章標題(列表和內頁都會用到)  </li>
+<li><code>date</code>: 日期，格式 <code>YYYY-MM-DD</code>，用來排序，缺少的話會被排到最後面  </li>
+<li><code>category</code>: 目前主要是資料欄位，可自由填寫  </li>
+<li><code>tags</code>: 清單格式 <code>[a, b, c]</code>，會顯示在日期旁邊，用頓號分隔</li>
+</ul>
+<p>網址代稱(slug)就是檔名，例如上例會是 <code>#/article/example</code>。  </p>
+<h3>編輯 / 刪除文章</h3>
+<ul>
+<li>編輯: 直接改對應 <code>.md</code> 檔案內容，存檔重新整理即可，不用重跑 scanner  </li>
+<li>刪除: 刪掉檔案，執行一次 <code>node engine/contentScanner.js</code>  </li>
+<li>改檔名(改網址): 改完檔名也要重跑 scanner</li>
+</ul>
+<h2>8. <code>content/projects</code> — 專案(Projects)</h2>
+<p>同第 7 點，但檔案放在 <code>content/projects/</code> 資料夾底下，網址會是 <code>#/projects/檔名</code>。  </p>
+<h2>9. <code>content/photography</code> — 相簿</h2>
+<p>相簿放在 <code>content/photography/&lt;分類&gt;/&lt;相簿代稱&gt;/</code>，一個資料夾就是一本相簿，裡面放一個 <code>album.yaml</code>(相簿資訊)和照片檔案本身。  </p>
+<h3>新增一本相簿</h3>
+<ol>
+<li>建立資料夾，例如: <code>content/photography/film/taipei-2026/</code>  </li>
+<li>把照片放進去，例如 <code>001.jpg</code>、<code>002.jpg</code>、<code>003.jpg</code>  </li>
+<li>在同一個資料夾建立 <code>album.yaml</code>:  <pre><code class="hljs language-yaml"><span class="hljs-attr">title:</span> <span class="hljs-string">台北</span> <span class="hljs-number">2026</span>
+<span class="hljs-attr">category:</span> <span class="hljs-string">film</span>
+<span class="hljs-attr">camera:</span> <span class="hljs-string">Leica</span> <span class="hljs-string">M6</span>
+<span class="hljs-attr">lens:</span> <span class="hljs-string">Summicron</span> <span class="hljs-string">35mm</span>
+<span class="hljs-attr">film:</span> <span class="hljs-string">Kodak</span> <span class="hljs-string">Portra</span> <span class="hljs-number">400</span>
+<span class="hljs-attr">date:</span> <span class="hljs-number">2026-05-01</span>
+<span class="hljs-attr">images:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-number">001.</span><span class="hljs-string">jpg</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-number">002.</span><span class="hljs-string">jpg</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-number">003.</span><span class="hljs-string">jpg</span></code></pre>
+</li>
+<li>執行 <code>node engine/contentScanner.js</code>  </li>
+<li>重新整理網頁，Photography 列表 (或導覽列 Film / Digital 下拉選單，依<code>category</code> 而定) 就會出現這本相簿</li>
+</ol>
+<h3>換封面</h3>
+<p>封面 = <code>images</code> 清單第一張。把想當封面的照片檔名移到第一個位置即可:  </p>
+<pre><code class="hljs language-yaml"><span class="hljs-attr">images:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-number">003.</span><span class="hljs-string">jpg</span>   <span class="hljs-comment"># 換到第一個，變成新封面</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-number">001.</span><span class="hljs-string">jpg</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-number">002.</span><span class="hljs-string">jpg</span></code></pre>
+<p>存檔重新整理即可看到變化，不用重跑 scanner(除非你新增/刪除/改名了照片
+檔案或相簿資料夾本身)。  </p>
+<h3>新增照片到現有相簿</h3>
+<p>把新照片丟進相簿資料夾，並在 <code>album.yaml</code> 的 <code>images</code> 清單加上檔名: </p>
+<pre><code class="hljs language-yaml"><span class="hljs-attr">images:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-number">001.</span><span class="hljs-string">jpg</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-number">002.</span><span class="hljs-string">jpg</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-number">004</span><span class="hljs-string">-new-photo.jpg</span>   <span class="hljs-comment"># 新加的</span></code></pre>
+<p>只有列在 <code>images</code> 裡的檔案才會顯示，資料夾裡多放沒列進去的圖不會出現。  </p>
+<h2>10. Markdown 語法</h2>
+<ul>
+<li>標題: <code>#</code> 到 <code>######</code>，共 6 級 (h1~h6)  </li>
+<li>段落與換行: 空兩格以換行，空一行以分段  </li>
+<li>強調: <code>**粗體**</code>、<code>*斜體*</code>、<code>~~刪除線~~</code>  </li>
+<li>清單:  <ul>
+<li>無序: <code>-</code> 開頭</li>
+<li>有序: <code>1. 2. ...</code></li>
+</ul>
+</li>
+<li>任務清單: <code>- [ ]</code> 待辦、<code>- [x]</code> 已完成  </li>
+<li>連結:  <ul>
+<li>行內連結: [文字](<a href="https://example.com">https://example.com</a>)  </li>
+<li>參照式連結: [文字][ref] + 另外一行 [ref]: <a href="https://example.com">https://example.com</a>  </li>
+<li>自動連結: <a href="https://example.com">https://example.com</a> 或 &lt;<a href="mailto:email@example.com">email@example.com</a>&gt;</li>
+</ul>
+</li>
+<li>圖片: !<a href="href">txt</a>  </li>
+<li>程式碼:  <ul>
+<li>行內: `code`</li>
+<li>區塊: 三個反引號 ``` 圍起來，可以標語言做語法標色，例如: <pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">hello</span>():
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;hi&quot;</span>)</code></pre>
+<ul>
+<li>支援語言: <code>javascript</code>、<code>typescript</code>、<code>python</code>、<code>java</code>、<code>c</code>、<code>cpp</code>、<code>rust</code>、<code>go</code>、<code>bash</code>、<code>x86asm</code>、<code>verilog</code>、<code>yaml</code>、<code>json</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>引用區塊: <code>&gt; </code>  <blockquote>
+<p>這是引言  </p>
+</blockquote>
+</li>
+<li>分隔線: <code>---</code>、<code>***</code>、<code>___</code>  </li>
+<li>表格: <pre><code class="hljs">| 1 | 2 | 3 |
+| - | - | - |
+| a | b | c |</code></pre>
+</li>
+<li>跳脫字元: <code>\*</code> 這樣可以讓 <code>*</code> 顯示成普通符號，不被當成強調語法  </li>
+<li>行內 HTML</li>
+</ul>
+<h2>11. YAML 注意事項</h2>
+<p>本專案內建輕量化 YAML 解析器，僅支援本模板需要的 YAML 語法，修改 <code>config/</code> 時請注意以下限制:  </p>
+<ol>
+<li><p>使用空白縮排 (4 格)  </p>
+</li>
+<li><p><code>:</code> 後須空格  </p>
+</li>
+<li><p>特殊符號建議加上引號  </p>
+</li>
+<li><p>日期使用 <code>yyyy-mm-dd</code>  </p>
+</li>
+<li><p>僅支援以下語法:  </p>
+<ul>
+<li>物件: <code>key: value</code>  </li>
+<li>陣列: <code>- item</code>  </li>
+<li>巢狀結構</li>
+</ul>
+</li>
+</ol>
+</div></article></main></div>
+    <footer id="footer-root"><p>© 2026 My Blog</p><p class="footer-tagline">None</p></footer>
+    <button id="theme-toggle" type="button" aria-label="切換淺色/深色模式"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></button>
+    <script type="module" src="/public/js/app.js"></script>
+</body>
+</html>

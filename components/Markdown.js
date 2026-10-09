@@ -18,7 +18,7 @@ export async function renderList(container, { categoryDef }){
         for(const post of posts){
             const item = document.createElement('a');
             item.className = 'post-list-item';
-            item.href = `#/${categoryDef.route}/${post.slug}`;
+            item.href = `/${categoryDef.route}/${post.slug}/`;
             item.innerHTML = `
                 <h2>${escapeHtml(post.title)}</h2>
                 <div class="post-meta">${escapeHtml(post.date)}${post.tags.length ? ' · ' + post.tags.map(escapeHtml).join(', ') : ''}</div>
@@ -36,7 +36,7 @@ export async function renderDetail(container, {categoryDef, slug}){
 
     if(!post){
         container.innerHTML = `
-            <a class="back-link" href="#/${categoryDef.route}">← ${escapeHtml(categoryDef.label)}</a>
+            <a class="back-link" href="/${categoryDef.route}/">← ${escapeHtml(categoryDef.label)}</a>
             <p class="empty">That post could not be found.</p>
         `;
         return;
@@ -45,7 +45,7 @@ export async function renderDetail(container, {categoryDef, slug}){
     const article = document.createElement('article');
     article.className = 'post-detail';
     article.innerHTML = `
-        <a class="back-link" href="#/${categoryDef.route}">← ${escapeHtml(categoryDef.label)}</a>
+        <a class="back-link" href="/${categoryDef.route}/">← ${escapeHtml(categoryDef.label)}</a>
         <h1>${escapeHtml(post.title)}</h1>
         <div class="post-meta">${escapeHtml(post.date)}${post.tags.length ? ' · ' + post.tags.map(escapeHtml).join(', ') : ''}</div>
         <div class="post-body">${post.html}</div>

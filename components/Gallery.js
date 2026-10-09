@@ -20,7 +20,7 @@ export async function renderList(container, {categoryDef, filter, filterTitle}){
         for(const album of albums){
             const card = document.createElement('a');
             card.className = 'gallery-card';
-            card.href = `#/${categoryDef.route}/${album.slug}`;
+            card.href = `/${categoryDef.route}/${album.slug}/`;
             card.innerHTML = `
                 <div class="gallery-thumb">
                     <img src="${escapeHtml(album.images[0] || '')}" alt="${escapeHtml(album.title)}" loading="lazy" />
@@ -40,7 +40,7 @@ export async function renderDetail(container, {categoryDef, slug}){
 
     if(!album){
         container.innerHTML = `
-            <a class="back-link" href="#/${categoryDef.route}">← ${escapeHtml(categoryDef.label)}</a>
+            <a class="back-link" href="/${categoryDef.route}/">← ${escapeHtml(categoryDef.label)}</a>
             <p class="empty">That album could not be found.</p>
         `;
         return;
@@ -56,7 +56,7 @@ export async function renderDetail(container, {categoryDef, slug}){
     const article = document.createElement('article');
     article.className = 'album-detail';
     article.innerHTML = `
-        <a class="back-link" href="#/${categoryDef.route}">← ${escapeHtml(categoryDef.label)}</a>
+        <a class="back-link" href="/${categoryDef.route}/">← ${escapeHtml(categoryDef.label)}</a>
         <h1>${escapeHtml(album.title)}</h1>
         <dl class="album-meta">
             ${metaRows.map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(String(v))}</dd>`).join('')}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme-mode="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>優化本部落格專案: 將圖片存於 Cloudflare R2 以 rclone 管理並改寫 contentIndex.js — My Blog</title>
+    <meta name="description" content="一、動機 相簿照片太多，家裡網路不好，從外面載入很慢，且若要丟到 GitHub 會有大小限制，因此將圖片存在雲端，repo 只留檔案清單與路徑。 二、建立 R2 Bucket 登入 Cloudflare dashboard，在左側搜尋找到 R2 Object Storage，建立 bucket，取個名字，這裡以…" />
+    <link rel="canonical" href="https://blog.example.com/article/CF_R2/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="優化本部落格專案: 將圖片存於 Cloudflare R2 以 rclone 管理並改寫 contentIndex.js — My Blog" />
+    <meta property="og:description" content="一、動機 相簿照片太多，家裡網路不好，從外面載入很慢，且若要丟到 GitHub 會有大小限制，因此將圖片存在雲端，repo 只留檔案清單與路徑。 二、建立 R2 Bucket 登入 Cloudflare dashboard，在左側搜尋找到 R2 Object Storage，建立 bucket，取個名字，這裡以…" />
+    <meta property="og:url" content="https://blog.example.com/article/CF_R2/" />
+    <link rel="stylesheet" href="/public/css/style.css" />
+    <link rel="icon" href="/public/images/avatar.png" />
+    <style>:root{--color-primary:#7bb8d9;--color-secondary:#e8a89c;--color-background:#0d1016;--color-surface:#161a22;--color-text:#e5e8ee;--color-muted:#7f8794;--navbar-opacity:0.4;--navbar-radius:999px;--bg-layers:linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url("/public/images/background.jpg")}</style>
+</head>
+<body>
+    <header id="navbar-root" class="navbar navbar--blur"><div class="navbar-list"><div class="navbar-item"><a class="navbar-link" href="/">Home</a></div><div class="navbar-item"><a class="navbar-link is-active" href="/article/">Article</a></div><div class="navbar-item has-children"><a class="navbar-link" href="/photography/">Photography</a><span class="ssg-subnav"><a class="navbar-dropdown-link" href="/photography/film/">Film</a><a class="navbar-dropdown-link" href="/photography/digital/">Digital</a></span></div><div class="navbar-item"><a class="navbar-link" href="/projects/">Projects</a></div><div class="navbar-item"><a class="navbar-link" href="/about/">About</a></div></div></header>
+    <div class="layout"><aside id="profile-root" class="profile-card"><div class="profile-avatar-frame"><img class="profile-avatar" src="/public/images/avatar.png" alt="Your Name" /></div><h2 class="profile-name">Your Name</h2><div class="profile-description"><p>text</p></div><div class="profile-links"><a class="profile-link-btn" href="https://github.com/shihyousyu" aria-label="GitHub" target="_blank" rel="noopener noreferrer">GitHub</a></div></aside><main id="content-root" data-route="/article/CF_R2"><article class="post-detail"><a class="back-link" href="/article/">← Article</a><h1>優化本部落格專案: 將圖片存於 Cloudflare R2 以 rclone 管理並改寫 contentIndex.js</h1><div class="post-meta">2026-07-26 · notes</div><div class="post-body"><h2>一、動機</h2>
+<p>相簿照片太多，家裡網路不好，從外面載入很慢，且若要丟到 GitHub 會有大小限制，因此將圖片存在雲端，repo 只留檔案清單與路徑。</p>
+<h2>二、建立 R2 Bucket</h2>
+<p>登入 Cloudflare dashboard，在左側搜尋找到 R2 Object Storage，建立 bucket，取個名字，這裡以 <code>my-photos</code> 做例子。</p>
+<p>進入 bucket，在 Settings 找到 Public Development URL，Enable 它，得到一串網址，這裡以 <code>&lt;pub-url&gt;</code> 代替。</p>
+<p>回到 R2 Object Storage，在右下角找到 Account Details，會看到 Account id，等等會用到，進入 Manage，Create 一個 API token，給予 Read &amp; Write 的權限，下一步得到 Access Key ID 與 Secret Access Key，同樣複製起來，等等會用到這兩個。</p>
+<h2>三、安裝 CLI 管理工具</h2>
+<p>檔案可以在頁面拖拉上傳，這裡採用雲端儲存管理工具 rclone (AWS 的 S3 也能用這個)。</p>
+<ol>
+<li><p>安裝 rclone</p>
+<ul>
+<li>Linux: <pre><code class="hljs language-bash">curl https://rclone.org/install.sh | <span class="hljs-built_in">sudo</span> bash</code></pre>
+</li>
+<li>macOS: <pre><code class="hljs">brew install rclone</code></pre>
+</li>
+<li>Windows: <pre><code class="hljs">winget install Rclone.Rclone</code></pre>
+</li>
+</ul>
+</li>
+<li><p>設定 R2 連線</p>
+<pre><code class="hljs">rclone <span class="hljs-keyword">config</span></code></pre>
+<p> 依序填這幾項:  </p>
+<ol>
+<li><code>n</code>，新增 remote，取個名字，這裡以 <code>r2</code> 舉例</li>
+<li>Storage type 選最長的那一串</li>
+<li>Provider 選 <code>Cloudflare R2 Storage</code></li>
+<li>env_auth 選 <code>Enter AWS credentials in the next step</code></li>
+<li>填入 Access Key ID 與 Secret Access Key</li>
+<li>下一步按 Enter 跳過，endpoint 填入 <code>https://&lt;account id&gt;.r2.cloudflarestorage.com</code></li>
+<li>下兩步按 Enter 跳過，最後按 <code>q</code> 離開 config</li>
+<li>測試連線: <code>rclone lsd r2:</code></li>
+</ol>
+</li>
+</ol>
+<h2>四、上傳檔案</h2>
+<p>rclone 常用語法: </p>
+<h3>查看</h3>
+<pre><code class="hljs"><span class="hljs-comment"># 列出所有 bucket</span>
+<span class="hljs-attr">rclone lsd r2:</span>
+
+<span class="hljs-comment"># 列出 bucket 底下的資料夾結構</span>
+<span class="hljs-attr">rclone lsd r2:</span> <span class="hljs-string">my-photos</span>
+
+<span class="hljs-comment"># 列出某路徑底下所有檔案(含大小)</span>
+<span class="hljs-attr">rclone ls r2:</span> <span class="hljs-string">my-photos/{path}</span></code></pre>
+<h3>上傳</h3>
+<pre><code class="hljs"># 把本地資料夾同步上傳到 <span class="hljs-built_in">R2</span>，除了 yaml 檔
+rclone copy <span class="hljs-string">&quot;C:\{path1}&quot;</span> <span class="hljs-built_in">r2</span>:my-photos/{path2} --exclude <span class="hljs-string">&quot;*.yaml&quot;</span>
+
+# 同步(會刪除 <span class="hljs-built_in">R2</span> 上本地沒有的檔案)
+rclone sync <span class="hljs-string">&quot;C:\{path1}&quot;</span> <span class="hljs-built_in">r2</span>:my-photos/{path2} --exclude <span class="hljs-string">&quot;*.yaml&quot;</span></code></pre>
+<p><code>copy</code>: 只新增<br><code>sync</code>: 多的會被刪掉</p>
+<h3>搬移 / 改名</h3>
+<pre><code class="hljs"># 資料夾改名(在 <span class="hljs-built_in">R2</span> 內部搬移)
+rclone move <span class="hljs-built_in">r2</span>:my-photos/{path}/{name1} <span class="hljs-built_in">r2</span>:my-photos/{path}/{name2}
+
+# 單一檔案改名
+rclone moveto <span class="hljs-built_in">r2</span>:my-photos/{path}/old<span class="hljs-number">.</span>jpg <span class="hljs-built_in">r2</span>:my-photos/{path}/new<span class="hljs-number">.</span>jpg</code></pre>
+<h3>刪除</h3>
+<pre><code class="hljs"><span class="hljs-comment"># 刪除單一檔案</span>
+rclone delete r2:my-photos/{path}/<span class="hljs-number">001.j</span>pg
+
+<span class="hljs-comment"># 刪除整個資料夾</span>
+rclone purge r2:my-photos/{path}</code></pre>
+<h2>五、更改 contentIndex.js</h2>
+<p>將讀取 album 的 <code>engine/loadAlbum(basePath, file)</code> 中原本路徑的位置改成網址。</p>
+<p>原本: </p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> res = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`<span class="hljs-subst">${basePath}</span>/<span class="hljs-subst">${file}</span>`</span>);</code></pre>
+<p>改成:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> <span class="hljs-variable constant_">CDN_BASE</span> = <span class="hljs-string">&#x27;https://&lt;pub-url&gt;&#x27;</span>;
+<span class="hljs-keyword">const</span> folder = <span class="hljs-string">`<span class="hljs-subst">${CDN_BASE}</span>/<span class="hljs-subst">${slug}</span>`</span>;</code></pre>
+<p>這樣讀取時會從本地的 <code>album.yaml</code> 讀取需要的檔案，但改從 R2 抓。</p>
+</div></article></main></div>
+    <footer id="footer-root"><p>© 2026 My Blog</p><p class="footer-tagline">None</p></footer>
+    <button id="theme-toggle" type="button" aria-label="切換淺色/深色模式"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></button>
+    <script type="module" src="/public/js/app.js"></script>
+</body>
+</html>

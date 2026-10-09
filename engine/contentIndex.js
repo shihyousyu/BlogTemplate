@@ -12,7 +12,7 @@ const albumsIndexPromises = new Map();
 
 async function loadManifest(basePath) {
     if (manifestCache.has(basePath)) return manifestCache.get(basePath);
-    const res = await fetch(`${basePath}/manifest.json`);
+    const res = await fetch(`/${basePath}/manifest.json`);
     if (!res.ok) throw new Error(`Failed to load manifest: ${basePath}/manifest.json`);
     const json = await res.json();
     manifestCache.set(basePath, json.files || []);
@@ -25,7 +25,7 @@ async function loadPost(basePath, file) {
     const slug = file.replace(/\.md$/, '');
     const cacheKey = `${basePath}/${slug}`;
     if (postCache.has(cacheKey)) return postCache.get(cacheKey);
-    const res = await fetch(`${basePath}/${file}`);
+    const res = await fetch(`/${basePath}/${file}`);
     const raw = await res.text();
     const { frontMatter, body } = splitFrontMatter(raw);
     const post = {
@@ -34,6 +34,7 @@ async function loadPost(basePath, file) {
         date: frontMatter.date || '',
         category: frontMatter.category || '',
         tags: frontMatter.tags || [],
+        description: frontMatter.description || '',
         html: renderMarkdown(body),
     };
     postCache.set(cacheKey, post);
@@ -67,10 +68,10 @@ async function loadAlbum(basePath, file) {
     const slug = file.replace(/\/album\.yaml$/, '');
     const cacheKey = `${basePath}/${slug}`;
     if (albumCache.has(cacheKey)) return albumCache.get(cacheKey);
-    const res = await fetch(`${basePath}/${file}`);
+    const res = await fetch(`/${basePath}/${file}`);
     const raw = await res.text();
     const meta = parseYAML(raw);
-    const folder = `${basePath}/${slug}`;
+    const folder = `/${basePath}/${slug}`;
     const album = {
         slug,
         title: meta.title || slug,

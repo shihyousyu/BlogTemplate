@@ -167,6 +167,11 @@ h1, h2, h3 {
   color: var(--color-primary);
 }
 
+/* Child navigation remains reachable when JavaScript is disabled on an SSG page. */
+.ssg-subnav {
+  display: contents;
+}
+
 /* ---------------------------------------------------------------- */
 /* Layout / Profile                                                   */
 /* ---------------------------------------------------------------- */

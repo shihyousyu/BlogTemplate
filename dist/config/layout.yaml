@@ -1,0 +1,16 @@
+home:
+    components:
+        - key: intro
+            title: Hello, World
+            text:
+                - "Example"
+            linkText: 關於我 ->
+            linkUrl: /about
+
+        - key: recentPosts
+            title: Recent Posts
+            limit: 3
+
+        - key: featuredPhotography
+            title: Featured Photography
+            limit: 4

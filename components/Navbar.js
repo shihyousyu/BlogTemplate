@@ -51,7 +51,7 @@ export function renderNavbar(container, config, path){
 
         const link = document.createElement('a');
         link.className = 'navbar-link' + (active ? ' is-active' : '');
-        link.href = `#${item.url}`;
+        link.href = item.url;
         link.textContent = item.name;
         wrap.appendChild(link);
 
@@ -71,7 +71,7 @@ export function renderNavbar(container, config, path){
             for(const child of item.children){
                 const childLink = document.createElement('a');
                 childLink.className = 'navbar-dropdown-link' + (isPathActive(path, child.url) ? ' is-active' : '');
-                childLink.href = `#${child.url}`;
+                childLink.href = child.url;
                 childLink.textContent = child.name;
                 panel.appendChild(childLink);
             }

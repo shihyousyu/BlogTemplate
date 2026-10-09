@@ -16,12 +16,12 @@ export async function loadConfig(path) {
 
 export async function loadAllConfig() {
     const [site, profile, navbar, theme, layout, content] = await Promise.all([
-        loadConfig('config/site.yaml'),
-        loadConfig('config/profile.yaml'),
-        loadConfig('config/navbar.yaml'),
-        loadConfig('config/theme.yaml'),
-        loadConfig('config/layout.yaml'),
-        loadConfig('config/content.yaml'),
+        loadConfig('/config/site.yaml'),
+        loadConfig('/config/profile.yaml'),
+        loadConfig('/config/navbar.yaml'),
+        loadConfig('/config/theme.yaml'),
+        loadConfig('/config/layout.yaml'),
+        loadConfig('/config/content.yaml'),
     ]);
     return { site, profile, navbar, theme, layout, content };
 }

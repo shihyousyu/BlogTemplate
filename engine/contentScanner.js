@@ -26,7 +26,7 @@ function walk(dir, base = dir) {
     return out;
 }
 
-function main() {
+export function scanContent() {
     const contentConfigText = fs.readFileSync(path.join(ROOT, 'config/content.yaml'), 'utf8');
     const { categories } = parseYAML(contentConfigText);
 
@@ -43,4 +43,6 @@ function main() {
     }
 }
 
-main();
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+    scanContent();
+}

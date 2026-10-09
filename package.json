@@ -2,5 +2,9 @@
     "name": "personal-website-template",
     "private": true,
     "type": "module",
-    "description": "Static config-driven personal website template. No dependencies; Node is only used at authoring time to run engine/contentScanner.js."
+    "description": "Static config-driven personal website template with native SSG and client-side navigation.",
+    "scripts": {
+        "scan": "node engine/contentScanner.js",
+        "build": "node engine/staticGenerator.js"
+    }
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://blog.example.com/</loc></url>
+  <url><loc>https://blog.example.com/article/</loc></url>
+  <url><loc>https://blog.example.com/article/CF_R2/</loc><lastmod>2026-07-26</lastmod></url>
+  <url><loc>https://blog.example.com/photography/</loc></url>
+  <url><loc>https://blog.example.com/photography/digital/others/</loc></url>
+  <url><loc>https://blog.example.com/photography/film/20251201_KODAK_Daylight/</loc></url>
+  <url><loc>https://blog.example.com/photography/digital/</loc></url>
+  <url><loc>https://blog.example.com/photography/film/</loc></url>
+  <url><loc>https://blog.example.com/projects/</loc></url>
+  <url><loc>https://blog.example.com/projects/WebsiteTemplate/</loc><lastmod>2026-07-24</lastmod></url>
+  <url><loc>https://blog.example.com/about/</loc></url>
+</urlset>

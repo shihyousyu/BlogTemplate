@@ -566,3 +566,25 @@ h1, h2, h3 {
     bottom: 1rem;
   }
 }
+
+/* Markdown tables：只保留欄位縮排，不加框線或底色 */
+#content-root table {
+  margin: 1.25rem 0;
+  border-collapse: collapse;
+}
+
+#content-root th,
+#content-root td {
+  padding: 0.35rem 1.5rem 0.35rem 0;
+  text-align: left;
+  vertical-align: top;
+}
+
+#content-root th:first-child,
+#content-root td:first-child {
+  padding-left: 0.75rem;
+}
+
+#content-root th {
+  font-weight: 700;
+}

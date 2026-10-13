@@ -2,6 +2,8 @@
 
 原生 HTML、CSS、JavaScript 製作的設定驅動部落格模板。它不使用前端框架，建置時會產生完整靜態 HTML；載入後再以 History API 提供不重新整理的站內導覽。
 
+## Demo: [BlogTemplate](https://blogTemplate.syu418.cc)
+
 ## 建置與部署
 
 需使用支援 ES modules 的 Node.js（建議 Node 18 以上）。
